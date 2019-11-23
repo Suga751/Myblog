@@ -1,0 +1,53 @@
+{% extends "blog_app/base.html" %}
+{% block content %}
+<div class="post">
+    {% if post.published_date %}
+    <div class="date">
+        {{ post.published_date }}
+    </div>
+    {% endif %}
+
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="/">{{ post.author }}</a>
+                <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h2><a class="article-title" href="/post/{{post.id}}">{{ post.title }}</a></h2>
+
+            {{ post.content }}</p>
+            
+
+        </div>
+    </article>
+</div>
+
+{% for comment in post.comments.all %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <div class="comment">
+                <p class="article-content">{{ comment.text }}</p>
+    
+                <div class="date">
+                    <small class="text-muted">{{ comment.created_date }}</small>
+                    {% if comment.author.id is request.user.id %}
+                    <a class="btn btn-default" href="/comment/{{comment.id}}/remove/{{post.id}}">X</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+
+{% endfor %}
+<div class="media-body">
+    <form action="/comment/{{post.id}}" method='POST'>
+        {% csrf_token %}
+        <p>Post a comment</p>
+        <textarea name="text" id="comment" rows="2" class="form-control mb-3"></textarea>
+        <input type="submit" value="Post Comment">
+    </form>
+</div>
+{% endblock %}
+
